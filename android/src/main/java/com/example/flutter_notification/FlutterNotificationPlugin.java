@@ -1,6 +1,7 @@
 package com.example.flutter_notification;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
@@ -40,18 +41,26 @@ public class FlutterNotificationPlugin implements MethodCallHandler {
   }
 
   private void goNotificationSetting(MethodCall call, Result result) {
-    Intent intent = new Intent();
-    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-      intent.putExtra(Settings.EXTRA_APP_PACKAGE, mRegistrar.activity().getPackageName());
-    } else {
-      intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-      intent.putExtra("app_package", mRegistrar.activity().getPackageName());
-      intent.putExtra("app_uid", mRegistrar.activity().getApplicationInfo().uid);
-    }
+    try {
+      Intent intent = new Intent();
+      if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, mRegistrar.activity().getPackageName());
+      } else {
+        intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+        intent.putExtra("app_package", mRegistrar.activity().getPackageName());
+        intent.putExtra("app_uid", mRegistrar.activity().getApplicationInfo().uid);
+      }
+      mRegistrar.activity().startActivity(intent);
+    } catch (Exception e) {
+      e.printStackTrace();
 
-    if(intent.resolveActivity(mRegistrar.activity().getPackageManager()) != null) {
-      mRegistrar.activity().startActivityForResult(intent, 0);
+      // 出现异常则跳转到应用设置界面, 如锤子坚果OD103
+      Intent intent = new Intent();
+      intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+      Uri uri = Uri.fromParts("package", mRegistrar.activity().getPackageName(), null);
+      intent.setData(uri);
+      mRegistrar.activity().startActivity(intent);
     }
   }
 }
