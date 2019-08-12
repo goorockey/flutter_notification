@@ -6,12 +6,12 @@ class FlutterNotification {
   static const MethodChannel _channel =
   const MethodChannel('flutter_notification');
 
-  static Future<bool> get notificationIsOpen async {
+  static Future<bool> notificationIsOpen() async {
     final bool isOpen = await _channel.invokeMethod('notificationIsOpen');
     return isOpen;
   }
 
-  static Future<void> get goNotificationSettings async {
+  static Future<void> goNotificationSettings() async {
     await _channel.invokeMethod('goNotificationSetting');
   }
 }
