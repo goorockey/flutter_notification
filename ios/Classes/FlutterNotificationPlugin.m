@@ -31,7 +31,7 @@
   result(@(isEnable));
 }
 
-- (void)checkNotificationOpen:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)goNotificationSetting:(FlutterMethodCall*)call result:(FlutterResult)result {
   UIApplication *application = [UIApplication sharedApplication];
   NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
   if ([application canOpenURL:url]) {
